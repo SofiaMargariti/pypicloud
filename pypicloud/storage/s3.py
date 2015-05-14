@@ -137,6 +137,8 @@ class S3Storage(IStorage):
             # credentials, those might expire before the URL. We will need to
             # adjust the expire_after and buffer_time accordingly.
             # See issue: https://github.com/mathcamp/pypicloud/issues/38
+            if self.bucket.connection.provider._credentials_need_refresh():
+                self.bucket.connection.provider._populate_keys_from_metadata_server()
             credential_expr = getattr(self.bucket.connection.provider,
                                       '_credential_expiry_time', None)
             expire_time = time.time() + expire_after
